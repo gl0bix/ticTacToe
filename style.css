@@ -1,0 +1,52 @@
+body {
+    background: black;
+    color: black;
+    font-family: 'lucida console', 'courier new', sans-serif;
+    font-weight: 80;
+    font-size: 50px;
+}
+
+section {
+    text-align: center;
+}
+
+.game-title {
+    font-size: 100px;
+    color: purple;
+    margin: 10px auto;
+}
+
+.game-container {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+    width: 312px;
+    margin: auto;
+    background-color: midnightblue;
+    color: greenyellow;
+}
+
+.cell {
+    width: 100px;
+    height: 100px;
+    box-shadow: 2px 2px 2px 2px cyan;
+    border: 2px solid cyan;
+    cursor: pointer;
+    line-height: 100px;
+    font-size: 60px;
+}
+
+.game-status {
+    font-size: 50px;
+    color: paleturquoise;
+    margin: 20px auto;
+}
+
+.game-restart {
+    background-color: midnightblue;
+    width: 200px;
+    height: 50px;
+    font-size: 25px;
+    color: pink;
+    box-shadow: 2px 2px 2px 2px cyan;
+    border: 2px solid cyan;
+}
