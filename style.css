@@ -35,6 +35,10 @@ section {
     font-size: 60px;
 }
 
+.cell:hover {
+    background-color: rgb(10, 1, 85);
+}
+
 .game-status {
     font-size: 50px;
     color: paleturquoise;

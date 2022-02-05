@@ -20,15 +20,18 @@ const Board = (() => {
         } else console.log("Index out of bounds!");
     };
 
+    const empty = () => {
+        for (let x in board) {
+            board[x] = "";
+        }
+    };
+
     return {
-        board, setSign
+        board, setSign, empty
     };
 })();
 
-
-
 const Game = (() => {
-
     const player1 = Object.create(Player).init("Player1", X_sign);
     const player2 = Object.create(Player).init("Player2", O_sign);
 
@@ -37,14 +40,14 @@ const Game = (() => {
     let overMessage = "";
 
     const winConditions = [
-        [0,1,2],
-        [3,4,5],
-        [6,7,8],
-        [0,3,6],
-        [1,4,7],
-        [2,5,8],
-        [0,4,8],
-        [6,4,2]
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [6, 4, 2]
     ];
 
     const getCurrentPlayerSign = () => {
@@ -69,20 +72,18 @@ const Game = (() => {
 
     const reset = () => {
         round = 1;
-        Board.clearBoard();
+        isOver = false;
     };
 
     const checkIfOver = () => {
-        if (round >= 9) {
+        if (winConditions.some((cond) => {
+            if (cond.every((i) => Board.board[i] === getCurrentPlayerSign())) return true;
+        })) {
+            isOver = true;
+            return `${getCurrentPlayerName()} wins!`;
+        } else if (round >= 9) {
             isOver = true;
             return "Draw!";
-        } else {
-            if (winConditions.some((cond) => {
-                if (cond.every((i) => Board.board[i] === getCurrentPlayerSign())) return true;
-            })) {
-                isOver = true;
-                return `${getCurrentPlayerName()} wins!`;
-            } 
         }
     };
 
@@ -90,9 +91,14 @@ const Game = (() => {
         Display.updateStatus("", message);
     };
 
+    const getIsOver = () => {
+        return isOver;
+    };
+
     return {
         player1,
         player2,
+        getIsOver,
         getCurrentPlayerSign,
         getNextPlayerName,
         playRound,
@@ -107,29 +113,37 @@ const Display = (() => {
     const restartButton = document.querySelector(".game-restart");
     const gameStatus = document.querySelector(".game-status");
 
-    //set start Status
+    const gameStartStatus = `On turn: ${Game.player1.name} \nStatus: Start!`;
+
+    const setStartStatus = () => {
+        gameStatus.innerText = gameStartStatus;
+    };
+
     gameStatus.innerText = `On turn: ${Game.player1.name} \nStatus: Start!`;
 
     cells.forEach((cell) => cell.addEventListener("click", () => {
-        if (Board.board[cell.dataset.index] === "") {
+        if (Board.board[cell.dataset.index] !== "" || Game.getIsOver()) return;
+        else {
             Board.setSign(cell.dataset.index, Game.getCurrentPlayerSign());
-            updateBoard();
+            updateBoardDisplay();
             updateStatus(Game.getNextPlayerName(), "Game is running");
             Game.playRound();
         }
     }));
-      
+
 
     restartButton.addEventListener("click", () => {
-        //TODO
+        Board.empty();
+        updateBoardDisplay();
+        setStartStatus();
+        Game.reset();
     });
 
     const updateStatus = (player, message) => {
         gameStatus.innerText = `On turn: ${player} \nStatus: ${message}`;
     };
 
-    const updateBoard = () => cells.forEach((cell) => cell.innerText = Board.board[cell.dataset.index]);
-
+    const updateBoardDisplay = () => cells.forEach((cell) => cell.innerText = Board.board[cell.dataset.index]);
 
     return {
         updateStatus
