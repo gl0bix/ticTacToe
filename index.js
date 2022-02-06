@@ -32,8 +32,12 @@ const Board = (() => {
 })();
 
 const Game = (() => {
-    const player1 = Object.create(Player).init("Player1", X_sign);
-    const player2 = Object.create(Player).init("Player2", O_sign);
+
+    const player1Name = window.prompt("Enter name for Player 1: ");
+    const player2Name = window.prompt("Enter name for Player 1: ");
+
+    const player1 = Object.create(Player).init(player1Name, X_sign);
+    const player2 = Object.create(Player).init(player2Name, O_sign);
 
     let round = 1;
     let isOver = false;
@@ -52,6 +56,10 @@ const Game = (() => {
 
     const getCurrentPlayerSign = () => {
         return round % 2 === 1 ? player1.sign : player2.sign;
+    };
+
+    const getNextPlayerSign = () => {
+        return round % 2 === 1 ? player2.sign : player1.sign;
     };
 
     const getNextPlayerName = () => {
@@ -88,7 +96,7 @@ const Game = (() => {
     };
 
     const gameOver = (message) => {
-        Display.updateStatus("", message);
+        Display.updateStatus("", "", message);
     };
 
     const getIsOver = () => {
@@ -101,6 +109,7 @@ const Game = (() => {
         getIsOver,
         getCurrentPlayerSign,
         getNextPlayerName,
+        getNextPlayerSign,
         playRound,
         reset
     };
@@ -113,20 +122,20 @@ const Display = (() => {
     const restartButton = document.querySelector(".game-restart");
     const gameStatus = document.querySelector(".game-status");
 
-    const gameStartStatus = `On turn: ${Game.player1.name} \nStatus: Start!`;
+    const gameStartStatus = `On turn: ${Game.player1.name}\n Sign: ${Game.player1.sign} \nStatus: Start!`;
+    
+    gameStatus.innerText = gameStartStatus;
 
     const setStartStatus = () => {
         gameStatus.innerText = gameStartStatus;
     };
-
-    gameStatus.innerText = `On turn: ${Game.player1.name} \nStatus: Start!`;
 
     cells.forEach((cell) => cell.addEventListener("click", () => {
         if (Board.board[cell.dataset.index] !== "" || Game.getIsOver()) return;
         else {
             Board.setSign(cell.dataset.index, Game.getCurrentPlayerSign());
             updateBoardDisplay();
-            updateStatus(Game.getNextPlayerName(), "Game is running");
+            updateStatus(Game.getNextPlayerName(), Game.getNextPlayerSign(), "Game is running");
             Game.playRound();
         }
     }));
@@ -139,8 +148,8 @@ const Display = (() => {
         Game.reset();
     });
 
-    const updateStatus = (player, message) => {
-        gameStatus.innerText = `On turn: ${player} \nStatus: ${message}`;
+    const updateStatus = (player, sign, message) => {
+        gameStatus.innerText = `On turn: ${player}\n Sign: ${sign} \nStatus: ${message}`;
     };
 
     const updateBoardDisplay = () => cells.forEach((cell) => cell.innerText = Board.board[cell.dataset.index]);
